@@ -11,11 +11,11 @@ pub struct PlanetColor {
 pub struct Star {
     pub name: String,
     pub body_type: String,
-    pub equatorial_radius: f64,
-    pub mass: f64,
-    pub surface_gravitation_acceleration: f64,
-    pub sidereal_rotation_period: f64,
-    pub soi: f64,
+    pub radius: f32,
+    pub mass: f32,
+    pub surface_gravitation_acceleration: f32,
+    pub sidereal_rotation_period: f32,
+    pub soi: f32,
     pub color: PlanetColor
 }
 
@@ -23,17 +23,17 @@ pub struct Star {
 pub struct Planet {
     pub name: String,
     pub body_type: String,
-    pub equatorial_radius: f64,
-    pub mass: f64,
-    pub surface_gravitation_acceleration: f64,
-    pub sidereal_rotation_period: f64,
-    pub soi: f64,
-    pub inclination: f64,
-    pub arg_pe: f64,
-    pub semi_major_axis: f64,
-    pub apoapsis: f64,
-    pub periapsis: f64,
-    pub orbital_velocity_pe: f64,
+    pub radius: f32,
+    pub mass: f32,
+    pub surface_gravitation_acceleration: f32,
+    pub sidereal_rotation_period: f32,
+    pub soi: f32,
+    pub inclination: f32,
+    pub arg_pe: f32,
+    pub semi_major_axis: f32,
+    pub apoapsis: f32,
+    pub periapsis: f32,
+    pub orbital_velocity_pe: f32,
     pub color: PlanetColor
 }
 

@@ -1,9 +1,9 @@
 {
     "stars": [
         {
-            "name": "Sun",
+            "name": "Kerbol",
             "body_type": "star",
-            "equatorial_radius": 2.616E+8,
+            "radius": 2.616E+8,
             "mass": 1.7565459E+28,
             "surface_gravitation_acceleration": 17.1,
             "sidereal_rotation_period": 432000.00,
@@ -19,7 +19,7 @@
         {
             "name": "Moho",
             "body_type": "planet",
-            "equatorial_radius": 250000.0,
+            "radius": 250000.0,
             "mass": 2.5263314E+21,
             "surface_gravitation_acceleration": 2.7,
             "sidereal_rotation_period": 1.21E+6,
@@ -28,7 +28,7 @@
             "arg_pe": 15.0,
             "semi_major_axis": 5263138304.0,
             "apoapsis": 6315765981.0,
-            "periapsis": 4210510628.0,
+            "periapsis": 421051062.80,
             "orbital_velocity_pe": 18279.0,
             "color": {
                 "red": 122,
@@ -39,7 +39,7 @@
         {
             "name": "Kerbin",
             "body_type": "planet",
-            "equatorial_radius": 600000.0,
+            "radius": 600000.0,
             "mass": 5.2915158E+22,
             "surface_gravitation_acceleration": 9.81,
             "sidereal_rotation_period": 21549.425,
@@ -59,7 +59,7 @@
         {
             "name": "Duna",
             "body_type": "planet",
-            "equatorial_radius": 320000.0,
+            "radius": 320000.0,
             "mass": 4.5154270E+21,
             "surface_gravitation_acceleration": 2.94,
             "sidereal_rotation_period": 65517.859,
