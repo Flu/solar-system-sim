@@ -136,7 +136,7 @@ fn setup(
                 ..default()
             },
             FocusableEntity::default(),
-            Velocity::from_xyz(0.0, planet.orbital_velocity_pe, 0.0),
+            Velocity::from_xyz(0.0, 0.0, -planet.orbital_velocity_pe),
             Acceleration::from_xyz(0.0, 0.0, 0.0),
             CelestialBody::new(planet.mass, &planet.name),
         ));
@@ -206,7 +206,7 @@ fn move_planets(
         &CelestialBody,
     )>,
 ) {
-    let dv = 10f32;
+    let dv = 2f32;
     let grav_constant = 6.6743E-11;
 
     for (sun_position, sun_body) in suns.iter() {
@@ -219,7 +219,7 @@ fn move_planets(
         {
             let r_vector = sun_position.translation - planet_position.translation;
             let distance = r_vector.length();
-            let acc = ((grav_constant * sun_body.mass * r_vector * planet_body.mass)
+            let acc = ((grav_constant * sun_body.mass * planet_body.mass* r_vector)
                 / (distance * distance * distance))
                 / planet_body.mass;
 

@@ -19,7 +19,7 @@ impl Default for PanOrbitCamera {
     fn default() -> Self {
         PanOrbitCamera {
             focus: Vec3::ZERO,
-            radius: 5.0,
+            radius: 3.0,
             upside_down: false,
         }
     }
@@ -132,6 +132,8 @@ pub fn orbit_camera(
             transform.translation =
                 pan_orbit.focus + rot_matrix.mul_vec3(Vec3::new(0.0, 0.0, pan_orbit.radius));
         }
+
+        dbg!(pan_orbit.radius);
     }
 
     // consume any remaining events, so they don't pile up if we don't need them
