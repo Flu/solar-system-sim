@@ -73,13 +73,14 @@ fn focus_camera(
     }
 }
 
-/// Pan the camera with middle mouse click, zoom with scroll wheel, orbit with right mouse click.
+/// Zoom with scroll wheel, orbit with right mouse click.
 fn orbit_camera(
     windows: Res<Windows>,
     mut ev_motion: EventReader<MouseMotion>,
     mut ev_scroll: EventReader<MouseWheel>,
     input_mouse: Res<Input<MouseButton>>,
     mut query_camera: Query<(&mut PanOrbitCamera, &mut Transform, &Projection)>,
+    planets: Query<(&FocusableEntity, &CelestialBody)>,
 ) {
     // change input mapping for orbit and panning here
     let orbit_button = MouseButton::Right;
@@ -128,8 +129,10 @@ fn orbit_camera(
         } else if scroll.abs() > 0.0 {
             any = true;
             pan_orbit.radius -= scroll * pan_orbit.radius * 0.2;
-            // dont allow zoom to reach zero or you get stuck
-            pan_orbit.radius = f32::max(pan_orbit.radius, 0.05);
+
+            // minimum zoom is the radius of the currently focused body plus 1
+            let min_zoom = planets.iter().find(|x| x.0.is_focused).unwrap().1.radius;
+            pan_orbit.radius = f32::max(pan_orbit.radius, min_zoom+10.);
         }
 
         if any {

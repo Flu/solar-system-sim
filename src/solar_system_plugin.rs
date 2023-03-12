@@ -57,26 +57,28 @@ fn create_sun_and_planets(
             });
     }
 
-    for planet in config.solar_system.planets.iter() {
-        let mesh = create_mesh(planet.radius, planet.color);
+    if let Some(sun) = config.solar_system.stars.iter().next() {
+        for planet in config.solar_system.planets.iter() {
+            let mesh = create_mesh(planet.radius, planet.color);
 
-        commands.spawn((
-            PbrBundle {
-                mesh: meshes.add(mesh),
-                material: materials.add(Color::rgb(1., 1., 1.).into()),
-                transform: Transform::from_xyz(planet.periapsis, 0., 0.),
-                ..default()
-            },
-            FocusableEntity::default(),
-            CelestialBody {
-                mass: planet.mass,
-                name: planet.name.clone(),
-                radius: planet.radius,
-                vel: Velocity::from_xyz(0.0, 0.0, -planet.orbital_velocity_pe),
-                acc: Acceleration::from_xyz(0.0, 0.0, 0.0),
-            },
-            Planet,
-        ));
+            commands.spawn((
+                PbrBundle {
+                    mesh: meshes.add(mesh),
+                    material: materials.add(Color::rgb(1., 1., 1.).into()),
+                    transform: Transform::from_xyz(planet.periapsis + sun.radius, 0., 0.),
+                    ..default()
+                },
+                FocusableEntity::default(),
+                CelestialBody {
+                    mass: planet.mass,
+                    name: planet.name.clone(),
+                    radius: planet.radius,
+                    vel: Velocity::from_xyz(0.0, 0.0, -planet.orbital_velocity_pe),
+                    acc: Acceleration::from_xyz(0.0, 0.0, 0.0),
+                },
+                Planet,
+            ));
+        }
     }
 }
 
@@ -88,27 +90,19 @@ fn move_planets(
     //dbg!(constants.physical_constants.dv);
     for (sun_pos, sun_body) in suns.iter() {
         for (mut planet_pos, mut planet_body, _) in planets.iter_mut() {
-
-            
             let r_vector = sun_pos.translation - planet_pos.translation;
             let distance = r_vector.length();
-            let acc = ((constants.physical_constants.gravitational_constant
-                * sun_body.mass
-                * planet_body.mass
-                * r_vector)
-                / (distance * distance * distance))
-                / planet_body.mass;
+
+            let sun_gravitational_parameter =
+                constants.physical_constants.gravitational_constant * sun_body.mass;
+
+            let acc = (sun_gravitational_parameter * r_vector) / (distance * distance * distance);
 
             planet_body.acc.vector = acc;
 
             planet_body.vel.vector += acc * constants.physical_constants.dv;
 
             planet_pos.translation += planet_body.vel.vector * constants.physical_constants.dv;
-
-            dbg!(r_vector);
-            dbg!(distance);
-            dbg!(planet_body.acc.vector);
-            dbg!(planet_body.vel.vector);
         }
     }
 }

@@ -28,8 +28,8 @@
             "arg_pe": 15.0,
             "semi_major_axis": 5263138304.0,
             "apoapsis": 6315765981.0,
-            "periapsis": 421051062.80,
-            "orbital_velocity_pe": 18.2790,
+            "periapsis": 4210510628.0,
+            "orbital_velocity_pe": 18279.0,
             "color": {
                 "red": 122,
                 "green": 83,
