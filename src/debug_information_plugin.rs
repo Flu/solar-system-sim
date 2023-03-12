@@ -1,9 +1,9 @@
 use bevy::{
     diagnostic::{Diagnostics, FrameTimeDiagnosticsPlugin},
-    prelude::*, math::Vec3Swizzles,
+    prelude::*
 };
 
-use crate::planet_components::{CelestialBody, Planet, FocusableEntity};
+use crate::planet_components::{CelestialBody, FocusableEntity};
 
 pub struct DebugInformationPlugin;
 
