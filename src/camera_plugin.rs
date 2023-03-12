@@ -1,10 +1,18 @@
+use crate::planet_components::*;
 use bevy::input::keyboard::*;
 use bevy::input::mouse::*;
 use bevy::input::ButtonState;
 use bevy::prelude::*;
-use bevy::transform;
 
-use crate::planet_components::FocusableEntity;
+pub struct CameraPlugin;
+
+impl Plugin for CameraPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_startup_system(spawn_camera)
+            .add_system(focus_camera)
+            .add_system(orbit_camera);
+    }
+}
 
 /// Tags an entity as capable of panning and orbiting.
 #[derive(Component)]
@@ -25,7 +33,7 @@ impl Default for PanOrbitCamera {
     }
 }
 
-pub fn focus_camera(
+fn focus_camera(
     mut key_evr: EventReader<KeyboardInput>,
     mut cameras: Query<(&mut PanOrbitCamera, &mut Transform, &Projection)>,
     mut query_focus: Query<(&mut FocusableEntity, &mut Transform), Without<PanOrbitCamera>>,
@@ -66,7 +74,7 @@ pub fn focus_camera(
 }
 
 /// Pan the camera with middle mouse click, zoom with scroll wheel, orbit with right mouse click.
-pub fn orbit_camera(
+fn orbit_camera(
     windows: Res<Windows>,
     mut ev_motion: EventReader<MouseMotion>,
     mut ev_scroll: EventReader<MouseWheel>,
@@ -132,8 +140,6 @@ pub fn orbit_camera(
             transform.translation =
                 pan_orbit.focus + rot_matrix.mul_vec3(Vec3::new(0.0, 0.0, pan_orbit.radius));
         }
-
-        dbg!(pan_orbit.radius);
     }
 
     // consume any remaining events, so they don't pile up if we don't need them
@@ -148,9 +154,9 @@ fn get_primary_window_size(windows: &Res<Windows>) -> Vec2 {
 }
 
 /// Spawn a camera like this
-pub fn spawn_camera(mut commands: Commands) {
+fn spawn_camera(mut commands: Commands) {
     let translation = Vec3::new(-2.0, 2.5, 5.0);
-    let radius = translation.length();
+    let radius = 750000.0;
 
     commands.spawn((
         Camera3dBundle {
