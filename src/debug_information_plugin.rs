@@ -1,6 +1,6 @@
 use bevy::{
     diagnostic::{Diagnostics, FrameTimeDiagnosticsPlugin},
-    prelude::*
+    prelude::*,
 };
 
 use crate::planet_components::{CelestialBody, FocusableEntity};
@@ -12,7 +12,10 @@ impl Plugin for DebugInformationPlugin {
         app.add_plugin(FrameTimeDiagnosticsPlugin::default())
             .add_startup_system(setup_text)
             .add_system(update_fps)
-            .add_system(update_planet_parameters);
+            .add_system(update_planet_name_text)
+            .add_system(update_r_vector_text)
+            .add_system(update_acceleration_vector_text)
+            .add_system(update_speed_vector_text);
     }
 }
 
@@ -20,11 +23,31 @@ impl Plugin for DebugInformationPlugin {
 struct FpsText;
 
 #[derive(Component)]
-struct DebugInfoText;
+struct DebugInfoPlanetInfo;
+
+#[derive(Component)]
+struct DebugInfoRVector;
+
+#[derive(Component)]
+struct DebugInfoSpeedVector;
+
+#[derive(Component)]
+struct DebugInfoAccelerationVector;
 
 fn setup_text(mut commands: Commands, asset_server: Res<AssetServer>) {
-
     let font = asset_server.load("fonts/LcdRoundedRegular.ttf");
+
+    let parameter_style = TextStyle {
+        font: font.clone(),
+        font_size: 20.0,
+        color: Color::WHITE,
+    };
+    let value_style = TextStyle {
+        font: font.clone(),
+        font_size: 20.0,
+        color: Color::ALICE_BLUE,
+    };
+
     commands.spawn((
         // Create a TextBundle that has a Text with a list of sections.
         TextBundle::from_sections([
@@ -41,49 +64,85 @@ fn setup_text(mut commands: Commands, asset_server: Res<AssetServer>) {
                 font_size: 20.0,
                 color: Color::GOLD,
             }),
-        ]),
-        FpsText,
-    ));
-
-    commands.spawn((
-        TextBundle::from_sections([
-            TextSection::new(
-                "Current distance from sun: ",
-                TextStyle {
-                    font: font.clone(),
-                    font_size: 20.0,
-                    color: Color::WHITE,
-                },
-            ),
-            TextSection::new(
-                "\nCurrent speed vector: ",
-                TextStyle {
-                    font: font.clone(),
-                    font_size: 20.0,
-                    color: Color::WHITE,
-                },
-            ),
-            TextSection::from_style(TextStyle {
-                font: font.clone(),
-                font_size: 20.0,
-                color: Color::ALICE_BLUE,
-            }),
-            TextSection::from_style(TextStyle {
-                font: font.clone(),
-                font_size: 20.0,
-                color: Color::ALICE_BLUE,
-            })
-        ])
-        .with_style(Style {
+        ]).with_style(Style {
             position_type: PositionType::Absolute,
             position: UiRect {
-                bottom: Val::Px(5.0),
-                left: Val::Px(15.0),
+                top: Val::Px(5.0),
+                left: Val::Px(5.0),
                 ..default()
             },
             ..default()
         }),
-        DebugInfoText,
+        FpsText,
+    ));
+
+    // Add debugging information
+    commands.spawn((
+        TextBundle::from_sections([
+            TextSection::new("", parameter_style.clone()),
+            TextSection::from_style(value_style.clone()),
+        ])
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            position: UiRect {
+                top: Val::Px(20.0),
+                left: Val::Px(5.0),
+                ..default()
+            },
+            ..default()
+        }),
+        DebugInfoPlanetInfo,
+    ));
+
+    commands.spawn((
+        TextBundle::from_sections([
+            TextSection::new("R-vector: ", parameter_style.clone()),
+            TextSection::from_style(value_style.clone()),
+        ])
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            position: UiRect {
+                top: Val::Px(35.0),
+                left: Val::Px(5.0),
+                ..default()
+            },
+            ..default()
+        }),
+        DebugInfoRVector,
+    ));
+
+    commands.spawn((
+        TextBundle::from_sections([
+            TextSection::new("Speed: ", parameter_style.clone()),
+            TextSection::from_style(value_style.clone()),
+        ])
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            position: UiRect {
+                top: Val::Px(50.0),
+                left: Val::Px(5.0),
+                ..default()
+            },
+            ..default()
+        }),
+        DebugInfoSpeedVector,
+    ));
+
+    commands.spawn((
+        TextBundle::from_sections([
+            TextSection::new("Acceleration: ", parameter_style.clone()),
+            TextSection::from_style(value_style.clone()),
+        ])
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            position: UiRect {
+                top: Val::Px(65.0),
+                left: Val::Px(5.0),
+                ..default()
+            },
+            ..default()
+        }),
+        DebugInfoAccelerationVector,
     ));
 }
 
@@ -98,20 +157,71 @@ fn update_fps(diagnostics: Res<Diagnostics>, mut query: Query<&mut Text, With<Fp
     }
 }
 
-fn update_planet_parameters(
-    planets: Query<(&Transform, &CelestialBody, &FocusableEntity)>,
-    mut texts: Query<(&mut Text, &mut DebugInfoText)>
+fn update_planet_name_text(
+    planets: Query<( &CelestialBody, &FocusableEntity)>,
+    mut texts: Query<(&mut Text, &mut DebugInfoPlanetInfo)>,
 ) {
-
-    for (pos, body, focus) in planets.iter() {
+    for (body, focus) in planets.iter() {
         if focus.is_focused {
             for (mut text, _) in texts.iter_mut() {
-                let distance_from_sun = pos.translation.length();
-                text.sections[2].value = format!("{distance_from_sun:.2} m");
+                let name = body.name.to_owned();
+                let mass = body.mass;
+                text.sections[1].value = format!("Name: {name} Mass: {mass} kg");
+            }
+        }
+    }
+}
 
-                let (vec_x, vec_y, vec_z) = (body.vel.vector.x, body.vel.vector.x, body.vel.vector.x);
+fn update_r_vector_text(
+    planets: Query<(&Transform, &FocusableEntity)>,
+    mut texts: Query<(&mut Text, &mut DebugInfoRVector)>,
+) {
+    for (pos, focus) in planets.iter() {
+        if focus.is_focused {
+            for (mut text, _) in texts.iter_mut() {
+                let x = pos.translation.x;
+                let y = pos.translation.y;
+                let z = pos.translation.z;
+                
+                let distance_from_sun = pos.translation.length();
+                text.sections[1].value =
+                    format!("[{x:.2}, {y:.2}, {z:.2}] {distance_from_sun:.3} m");
+            }
+        }
+    }
+}
+
+fn update_speed_vector_text(
+    planets: Query<(&CelestialBody, &FocusableEntity)>,
+    mut texts: Query<(&mut Text, &mut DebugInfoSpeedVector)>,
+) {
+    for (body, focus) in planets.iter() {
+        if focus.is_focused {
+            for (mut text, _) in texts.iter_mut() {
+                let x = body.vel.vector.x;
+                let y = body.vel.vector.y;
+                let z = body.vel.vector.z;
+
                 let speed = body.vel.vector.length();
-                text.sections[3].value = format!(r"[{vec_x:.4}, {vec_y:.4}, {vec_z:.4}], {speed:.4} m/s");
+                text.sections[1].value = format!("[{x:.2}, {y:.2}, {z:.2}] {speed:.3} m/s");
+            }
+        }
+    }
+}
+
+fn update_acceleration_vector_text(
+    planets: Query<(&CelestialBody, &FocusableEntity)>,
+    mut texts: Query<(&mut Text, &mut DebugInfoAccelerationVector)>,
+) {
+    for (body, focus) in planets.iter() {
+        if focus.is_focused {
+            for (mut text, _) in texts.iter_mut() {
+                let x = body.acc.vector.x;
+                let y = body.acc.vector.y;
+                let z = body.acc.vector.z;
+
+                let acc = body.acc.vector.length();
+                text.sections[1].value = format!("[{x:.2}, {y:.2}, {z:.2}] {acc:.3} m/s^2");
             }
         }
     }

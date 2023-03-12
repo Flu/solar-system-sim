@@ -114,7 +114,7 @@ fn orbit_camera(
             any = true;
             let window = get_primary_window_size(&windows);
             let delta_x = {
-                let delta = rotation_move.x / window.x * std::f32::consts::PI * 2.0;
+                let delta = rotation_move.x / window.x * std::f32::consts::PI;
                 if pan_orbit.upside_down {
                     -delta
                 } else {
