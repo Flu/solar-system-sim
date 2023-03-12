@@ -19,6 +19,7 @@
         {
             "name": "Moho",
             "body_type": "planet",
+            "color_texture": "planets/moho/color_texture.png",
             "radius": 250000.0,
             "mass": 2.5263314E+21,
             "surface_gravitation_acceleration": 2.7,
@@ -39,6 +40,7 @@
         {
             "name": "Kerbin",
             "body_type": "planet",
+            "color_texture": "planets/kerbin/color_texture.png",
             "radius": 600000.0,
             "mass": 5.2915158E+16,
             "surface_gravitation_acceleration": 9.81,
@@ -59,6 +61,7 @@
         {
             "name": "Duna",
             "body_type": "planet",
+            "color_texture": "planets/duna/color_texture.png",
             "radius": 320000.0,
             "mass": 4.5154270E+13,
             "surface_gravitation_acceleration": 2.94,

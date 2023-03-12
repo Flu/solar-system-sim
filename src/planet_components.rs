@@ -23,7 +23,9 @@ pub struct CelestialBody {
     pub name: String,
     pub radius: f32,
     pub vel: Velocity,
-    pub acc: Acceleration
+    pub acc: Acceleration,
+    pub rot: f32,
+    pub inclination: f32
 }
 
 #[derive(Default, Debug)]

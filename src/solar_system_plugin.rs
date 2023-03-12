@@ -7,7 +7,8 @@ impl Plugin for SolarSystemPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<SolarSystemConfiguration>()
             .add_startup_system(create_sun_and_planets)
-            .add_system(move_planets);
+            .add_system(move_planets)
+            .add_system(rotate_planets);
     }
 }
 
@@ -16,6 +17,7 @@ fn create_sun_and_planets(
     mut meshes: ResMut<Assets<Mesh>>,
     config: Res<SolarSystemConfiguration>,
     mut materials: ResMut<Assets<StandardMaterial>>,
+    asset_server: Res<AssetServer>,
 ) {
     // Create the suns of the system
     for sun in config.solar_system.stars.iter() {
@@ -26,9 +28,10 @@ fn create_sun_and_planets(
                 PointLightBundle {
                     transform: Transform::from_xyz(0.0, 0.0, 0.0),
                     point_light: PointLight {
-                        intensity: 3.573E+27, // lumens - roughly a 10000W non-halogen incandescent bulb
+                        intensity: 8.573E+21, // lumens - roughly a 10000W non-halogen incandescent bulb
                         color: sun.color.to_color(),
                         shadows_enabled: true,
+                        range: f32::MAX,
                         ..default()
                     },
                     ..default()
@@ -40,6 +43,8 @@ fn create_sun_and_planets(
                     radius: sun.radius,
                     vel: Velocity::default(),
                     acc: Acceleration::default(),
+                    rot: 2.0*(std::f32::consts::PI)/sun.sidereal_rotation_period,
+                    inclination: 0.0,
                 },
                 Star,
             ))
@@ -64,7 +69,15 @@ fn create_sun_and_planets(
             commands.spawn((
                 PbrBundle {
                     mesh: meshes.add(mesh),
-                    material: materials.add(Color::rgb(1., 1., 1.).into()),
+                    material: materials.add(StandardMaterial {
+                        base_color: planet.color.to_color(),
+                        base_color_texture: Some(
+                            asset_server.load(planet.color_texture.to_owned()),
+                        ),
+                        perceptual_roughness: 0.9,
+                        reflectance: 0.2,
+                        ..default()
+                    }),
                     transform: Transform::from_xyz(planet.periapsis + sun.radius, 0., 0.),
                     ..default()
                 },
@@ -75,6 +88,8 @@ fn create_sun_and_planets(
                     radius: planet.radius,
                     vel: Velocity::from_xyz(0.0, 0.0, -planet.orbital_velocity_pe),
                     acc: Acceleration::from_xyz(0.0, 0.0, 0.0),
+                    rot: 2.0*(std::f32::consts::PI)/planet.sidereal_rotation_period,
+                    inclination: planet.inclination,
                 },
                 Planet,
             ));
@@ -107,11 +122,21 @@ fn move_planets(
     }
 }
 
+fn rotate_planets(
+    mut planets: Query<(&mut Transform, &CelestialBody, &Planet)>,
+    constants: Res<SolarSystemConfiguration>,
+) {
+    for (mut planet_pos, planet_body, _) in planets.iter_mut() {
+        planet_pos.rotate_y(planet_body.rot*constants.physical_constants.dv);
+    }
+}
+
 fn create_mesh(radius: f32, color: PlanetColor) -> Mesh {
     // Create the mesh of the sun
-    let mut mesh = Mesh::from(shape::Icosphere {
-        subdivisions: 10,
+    let mut mesh = Mesh::from(shape::UVSphere {
         radius,
+        sectors: 30,
+        stacks: 20,
         ..default()
     });
 
