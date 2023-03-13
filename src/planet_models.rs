@@ -77,6 +77,7 @@ pub struct PlanetModel {
     pub name: String,
     pub body_type: String,
     pub color_texture: String,
+    pub normal_texture: String,
     pub radius: f32,
     pub mass: f32,
     pub surface_gravitation_acceleration: f32,

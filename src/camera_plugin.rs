@@ -1,4 +1,5 @@
 use crate::planet_components::*;
+use bevy::core_pipeline::bloom::BloomSettings;
 use bevy::input::keyboard::*;
 use bevy::input::mouse::*;
 use bevy::input::ButtonState;
@@ -132,7 +133,7 @@ fn orbit_camera(
 
             // minimum zoom is the radius of the currently focused body plus 1
             let min_zoom = planets.iter().find(|x| x.0.is_focused).unwrap().1.radius;
-            pan_orbit.radius = f32::max(pan_orbit.radius, min_zoom+10.);
+            pan_orbit.radius = f32::max(pan_orbit.radius, min_zoom + 10.);
         }
 
         if any {
@@ -164,11 +165,19 @@ fn spawn_camera(mut commands: Commands) {
     commands.spawn((
         Camera3dBundle {
             transform: Transform::from_translation(translation).looking_at(Vec3::ZERO, Vec3::Y),
-            ..Default::default()
+            camera: Camera {
+                hdr: true,
+                ..default()
+            },
+            ..default()
         },
         PanOrbitCamera {
             radius,
             ..Default::default()
+        },
+        BloomSettings {
+            intensity: 0.99, // the default is 0.3
+            ..default()
         },
     ));
 }

@@ -1,5 +1,5 @@
 use crate::{planet_components::*, planet_models::*};
-use bevy::{prelude::*, render::mesh::VertexAttributeValues};
+use bevy::{prelude::*, render::mesh::VertexAttributeValues, input::{keyboard::KeyboardInput, ButtonState}};
 
 pub struct SolarSystemPlugin;
 
@@ -8,7 +8,8 @@ impl Plugin for SolarSystemPlugin {
         app.init_resource::<SolarSystemConfiguration>()
             .add_startup_system(create_sun_and_planets)
             .add_system(move_planets)
-            .add_system(rotate_planets);
+            .add_system(rotate_planets)
+            .add_system(change_time_dv);
     }
 }
 
@@ -28,7 +29,7 @@ fn create_sun_and_planets(
                 PointLightBundle {
                     transform: Transform::from_xyz(0.0, 0.0, 0.0),
                     point_light: PointLight {
-                        intensity: 8.573E+21, // lumens - roughly a 10000W non-halogen incandescent bulb
+                        intensity: 1.573E+22, // lumens
                         color: sun.color.to_color(),
                         shadows_enabled: true,
                         range: f32::MAX,
@@ -66,16 +67,28 @@ fn create_sun_and_planets(
         for planet in config.solar_system.planets.iter() {
             let mesh = create_mesh(planet.radius, planet.color);
 
+            let base_color_texture: Option<Handle<Image>> = if planet.color_texture != "" {
+                Some(asset_server.load(planet.color_texture.to_owned()))
+            } else {
+                None
+            };
+
+            let normal_map_texture: Option<Handle<Image>> = if planet.normal_texture != "" {
+                Some(asset_server.load(planet.normal_texture.to_owned()))
+            } else {
+                None
+            };
+
             commands.spawn((
                 PbrBundle {
                     mesh: meshes.add(mesh),
                     material: materials.add(StandardMaterial {
                         base_color: planet.color.to_color(),
-                        base_color_texture: Some(
-                            asset_server.load(planet.color_texture.to_owned()),
-                        ),
+                        base_color_texture,
+                        normal_map_texture,
                         perceptual_roughness: 0.9,
                         reflectance: 0.2,
+                        flip_normal_map_y: true,
                         ..default()
                     }),
                     transform: Transform::from_xyz(planet.periapsis + sun.radius, 0., 0.),
@@ -131,12 +144,33 @@ fn rotate_planets(
     }
 }
 
+fn change_time_dv(
+    mut key_evr: EventReader<KeyboardInput>,
+    mut constants: ResMut<SolarSystemConfiguration>
+) {
+
+    let increase_dv_button = KeyCode::Period;
+    let decrease_dv_button = KeyCode::Comma;
+
+    for ev in key_evr.iter() {
+        // Change focus to the next object when the button is pressed
+
+        if ev.state == ButtonState::Pressed && ev.key_code == Some(increase_dv_button) {
+            constants.physical_constants.dv *= 10.0;
+        }
+
+        if ev.state == ButtonState::Pressed && ev.key_code == Some(decrease_dv_button) {
+            constants.physical_constants.dv /= 10.0;
+        }
+    }
+}
+
 fn create_mesh(radius: f32, color: PlanetColor) -> Mesh {
     // Create the mesh of the sun
     let mut mesh = Mesh::from(shape::UVSphere {
         radius,
-        sectors: 30,
-        stacks: 20,
+        sectors: 100,
+        stacks: 100,
         ..default()
     });
 
