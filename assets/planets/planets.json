@@ -2,35 +2,28 @@
     "stars": [
         {
             "name": "Kerbol",
-            "body_type": "star",
-            "radius": 2.616E+8,
-            "mass": 1.7565459E+28,
-            "surface_gravitation_acceleration": 17.1,
+            "radius": 261.6,
+            "mass": 1.7565459E+22,
+            "gravitational_parameter": 15704.9927934,
             "sidereal_rotation_period": 432000.00,
-            "soi": 1.7976931348623157E+308,
             "color": {
-                "red": 255,
+                "red": 245,
                 "green": 255,
-                "blue": 91
+                "blue": 230
             }
         }
     ],
     "planets": [
         {
             "name": "Moho",
-            "body_type": "planet",
             "color_texture": "planets/moho/color_texture.png",
-            "radius": 250000.0,
-            "mass": 2.5263314E+21,
-            "surface_gravitation_acceleration": 2.7,
+            "normal_texture": "",
+            "radius": 0.25,
+            "mass": 2.5263314E+15,
             "sidereal_rotation_period": 1.21E+6,
-            "soi": 9646663.0,
             "inclination": 7.0,
-            "arg_pe": 15.0,
-            "semi_major_axis": 5263138304.0,
-            "apoapsis": 6315765981.0,
-            "periapsis": 4210510628.0,
-            "orbital_velocity_pe": 18279.0,
+            "periapsis": 4210.510628,
+            "orbital_velocity_pe": 2.115625,
             "color": {
                 "red": 122,
                 "green": 83,
@@ -38,45 +31,67 @@
             }
         },
         {
-            "name": "Kerbin",
-            "body_type": "planet",
-            "color_texture": "planets/kerbin/color_texture.png",
-            "radius": 600000.0,
-            "mass": 5.2915158E+16,
-            "surface_gravitation_acceleration": 9.81,
-            "sidereal_rotation_period": 21549.425,
-            "soi": 84159286.0,
-            "inclination": 0.0,
-            "arg_pe": 0.0,
-            "semi_major_axis": 13599840256.0,
-            "apoapsis": 13599840256.0,
-            "periapsis": 13599840256.0,
-            "orbital_velocity_pe": 9285.0,
+            "name": "Eve",
+            "color_texture": "planets/eve/color_texture.png",
+            "normal_texture": "",
+            "radius": 0.7,
+            "mass": 1.2243980E+17,
+            "sidereal_rotation_period": 80500.0,
+            "inclination": 2.1,
+            "periapsis": 9734.3577010,
+            "orbital_velocity_pe": 1.27650462962962,
             "color": {
-                "red": 69,
-                "green": 199,
+                "red": 247,
+                "green": 94,
+                "blue": 237
+            }
+        },
+        {
+            "name": "Kerbin",
+            "color_texture": "planets/kerbin/color_texture.png",
+            "normal_texture": "planets/kerbin/normal_texture.png",
+            "radius": 6.0000000,
+            "mass": 5.2915158E+10,
+            "sidereal_rotation_period": 21549.425,
+            "inclination": 0.0,
+            "periapsis": 13599.8402560,
+            "orbital_velocity_pe": 1.07465277777,
+            "color": {
+                "red": 255,
+                "green": 255,
                 "blue": 255
             }
         },
         {
             "name": "Duna",
-            "body_type": "planet",
             "color_texture": "planets/duna/color_texture.png",
-            "radius": 320000.0,
-            "mass": 4.5154270E+13,
-            "surface_gravitation_acceleration": 2.94,
+            "normal_texture": "",
+            "radius": 0.3200000,
+            "mass": 4.5154270E+7,
             "sidereal_rotation_period": 65517.859,
-            "soi": 47921949.0,
             "inclination": 0.06,
-            "arg_pe": 0.0,
-            "semi_major_axis": 20726155264.0,
-            "apoapsis": 21783189163.0,
-            "periapsis": 19669121365.0,
-            "orbital_velocity_pe": 7915.0,
+            "periapsis": 19669.1213650,
+            "orbital_velocity_pe": 0.9160879629629,
             "color": {
                 "red": 255,
-                "green": 60,
-                "blue": 11
+                "green": 255,
+                "blue": 255
+            }
+        },
+        {
+            "name": "Jool",
+            "color_texture": "",
+            "normal_texture": "",
+            "radius": 6.000000,
+            "mass": 4.2332127E+18,
+            "sidereal_rotation_period": 36000.0,
+            "inclination": 1.304,
+            "periapsis": 65334882253.0,
+            "orbital_velocity_pe": 0.502430555555,
+            "color": {
+                "red": 20,
+                "green": 153,
+                "blue": 49
             }
         }
     ]

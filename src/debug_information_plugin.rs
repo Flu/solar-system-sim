@@ -166,7 +166,7 @@ fn update_planet_name_text(
             for (mut text, _) in texts.iter_mut() {
                 let name = body.name.to_owned();
                 let mass = body.mass;
-                text.sections[1].value = format!("Name: {name} Mass: {mass} kg");
+                text.sections[1].value = format!("Name: {name} Mass: {mass} M tonnes");
             }
         }
     }
@@ -185,7 +185,7 @@ fn update_r_vector_text(
                 
                 let distance_from_sun = pos.translation.length();
                 text.sections[1].value =
-                    format!("[{x:.2}, {y:.2}, {z:.2}] {distance_from_sun:.3} m");
+                    format!("[{x:.5}, {y:.5}, {z:.5}] {distance_from_sun:.3} Mm");
             }
         }
     }
@@ -203,7 +203,7 @@ fn update_speed_vector_text(
                 let z = body.vel.vector.z;
 
                 let speed = body.vel.vector.length();
-                text.sections[1].value = format!("[{x:.2}, {y:.2}, {z:.2}] {speed:.3} m/s");
+                text.sections[1].value = format!("[{x:.5}, {y:.5}, {z:.5}] {speed:.3} Mm/day");
             }
         }
     }
@@ -221,7 +221,7 @@ fn update_acceleration_vector_text(
                 let z = body.acc.vector.z;
 
                 let acc = body.acc.vector.length();
-                text.sections[1].value = format!("[{x:.2}, {y:.2}, {z:.2}] {acc:.3} m/s^2");
+                text.sections[1].value = format!("[{x:.5}, {y:.5}, {z:.5}] {acc:.3} Mm/day^2");
             }
         }
     }

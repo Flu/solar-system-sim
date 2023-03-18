@@ -29,7 +29,7 @@ fn create_sun_and_planets(
                 PointLightBundle {
                     transform: Transform::from_xyz(0.0, 0.0, 0.0),
                     point_light: PointLight {
-                        intensity: 1.573E+22, // lumens
+                        intensity: 1.573E+11, // lumens
                         color: sun.color.to_color(),
                         shadows_enabled: true,
                         range: f32::MAX,
@@ -42,6 +42,7 @@ fn create_sun_and_planets(
                     mass: sun.mass,
                     name: sun.name.clone(),
                     radius: sun.radius,
+                    gravitational_parameter: sun.gravitational_parameter,
                     vel: Velocity::default(),
                     acc: Acceleration::default(),
                     rot: 2.0*(std::f32::consts::PI)/sun.sidereal_rotation_period,
@@ -99,6 +100,7 @@ fn create_sun_and_planets(
                     mass: planet.mass,
                     name: planet.name.clone(),
                     radius: planet.radius,
+                    gravitational_parameter: 0.0,
                     vel: Velocity::from_xyz(0.0, 0.0, -planet.orbital_velocity_pe),
                     acc: Acceleration::from_xyz(0.0, 0.0, 0.0),
                     rot: 2.0*(std::f32::consts::PI)/planet.sidereal_rotation_period,
@@ -121,10 +123,7 @@ fn move_planets(
             let r_vector = sun_pos.translation - planet_pos.translation;
             let distance = r_vector.length();
 
-            let sun_gravitational_parameter =
-                constants.physical_constants.gravitational_constant * sun_body.mass;
-
-            let acc = (sun_gravitational_parameter * r_vector) / (distance * distance * distance);
+            let acc = (sun_body.gravitational_parameter * r_vector) / (distance * distance * distance);
 
             planet_body.acc.vector = acc;
 
@@ -169,8 +168,8 @@ fn create_mesh(radius: f32, color: PlanetColor) -> Mesh {
     // Create the mesh of the sun
     let mut mesh = Mesh::from(shape::UVSphere {
         radius,
-        sectors: 100,
-        stacks: 100,
+        sectors: 50,
+        stacks: 25,
         ..default()
     });
 

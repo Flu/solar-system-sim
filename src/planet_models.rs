@@ -63,30 +63,22 @@ impl PlanetColor {
 #[derive(Deserialize, Serialize, Debug)]
 pub struct StarModel {
     pub name: String,
-    pub body_type: String,
     pub radius: f32,
     pub mass: f32,
-    pub surface_gravitation_acceleration: f32,
+    pub gravitational_parameter: f32,
     pub sidereal_rotation_period: f32,
-    pub soi: f32,
     pub color: PlanetColor,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct PlanetModel {
     pub name: String,
-    pub body_type: String,
     pub color_texture: String,
     pub normal_texture: String,
     pub radius: f32,
     pub mass: f32,
-    pub surface_gravitation_acceleration: f32,
     pub sidereal_rotation_period: f32,
-    pub soi: f32,
     pub inclination: f32,
-    pub arg_pe: f32,
-    pub semi_major_axis: f32,
-    pub apoapsis: f32,
     pub periapsis: f32,
     pub orbital_velocity_pe: f32,
     pub color: PlanetColor,

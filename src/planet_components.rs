@@ -22,6 +22,7 @@ pub struct CelestialBody {
     pub mass: f32,
     pub name: String,
     pub radius: f32,
+    pub gravitational_parameter: f32,
     pub vel: Velocity,
     pub acc: Acceleration,
     pub rot: f32,
