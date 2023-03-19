@@ -1,4 +1,4 @@
-use crate::{planet_components::*, planet_models::*};
+use crate::{planet_components::*, planet_models::*, labels::*};
 use bevy::{prelude::*, render::mesh::VertexAttributeValues, input::{keyboard::KeyboardInput, ButtonState}};
 
 pub struct SolarSystemPlugin;
@@ -7,9 +7,15 @@ impl Plugin for SolarSystemPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<SolarSystemConfiguration>()
             .add_startup_system(create_sun_and_planets)
-            .add_system(move_planets)
-            .add_system(rotate_planets)
-            .add_system(change_time_dv);
+            .add_system(move_planets
+                .label(SystemTypes::PhysicsLabel)
+                .before(SystemTypes::CameraLabel))
+            .add_system(rotate_planets
+                .label(SystemTypes::PhysicsLabel)
+                .before(SystemTypes::CameraLabel))
+            .add_system(change_time_dv
+                .label(SystemTypes::PhysicsLabel)
+                .before(SystemTypes::CameraLabel));
     }
 }
 
@@ -29,7 +35,7 @@ fn create_sun_and_planets(
                 PointLightBundle {
                     transform: Transform::from_xyz(0.0, 0.0, 0.0),
                     point_light: PointLight {
-                        intensity: 1.573E+11, // lumens
+                        intensity: 5.573E+10, // lumens
                         color: sun.color.to_color(),
                         shadows_enabled: true,
                         range: f32::MAX,
@@ -66,7 +72,7 @@ fn create_sun_and_planets(
 
     if let Some(sun) = config.solar_system.stars.iter().next() {
         for planet in config.solar_system.planets.iter() {
-            let mesh = create_mesh(planet.radius, planet.color);
+            let mut mesh = create_mesh(planet.radius, planet.color);
 
             let base_color_texture: Option<Handle<Image>> = if planet.color_texture != "" {
                 Some(asset_server.load(planet.color_texture.to_owned()))
@@ -80,21 +86,26 @@ fn create_sun_and_planets(
                 None
             };
 
-            commands.spawn((
-                PbrBundle {
-                    mesh: meshes.add(mesh),
-                    material: materials.add(StandardMaterial {
-                        base_color: planet.color.to_color(),
-                        base_color_texture,
-                        normal_map_texture,
-                        perceptual_roughness: 0.9,
-                        reflectance: 0.2,
-                        flip_normal_map_y: true,
-                        ..default()
-                    }),
-                    transform: Transform::from_xyz(planet.periapsis + sun.radius, 0., 0.),
+            Mesh::generate_tangents(&mut mesh).expect("Something");
+
+            let planet_pbr_bundle = PbrBundle {
+                mesh: meshes.add(mesh),
+                material: materials.add(StandardMaterial {
+                    base_color: planet.color.to_color(),
+                    base_color_texture,
+                    normal_map_texture,
+                    perceptual_roughness: 0.9,
+                    reflectance: 0.2,
                     ..default()
-                },
+                }),
+                transform:
+                    Transform::from_xyz(planet.periapsis + sun.radius, 0., 0.)
+                    .with_rotation(Quat::from_rotation_x(std::f32::consts::FRAC_PI_2 + (planet.inclination/180. * std::f32::consts::PI)))
+                    ,
+                ..default()
+            };
+
+            commands.spawn((planet_pbr_bundle,
                 FocusableEntity::default(),
                 CelestialBody {
                     mass: planet.mass,
@@ -168,8 +179,8 @@ fn create_mesh(radius: f32, color: PlanetColor) -> Mesh {
     // Create the mesh of the sun
     let mut mesh = Mesh::from(shape::UVSphere {
         radius,
-        sectors: 50,
-        stacks: 25,
+        sectors: 100,
+        stacks: 50,
         ..default()
     });
 

@@ -50,7 +50,7 @@
             "name": "Kerbin",
             "color_texture": "planets/kerbin/color_texture.png",
             "normal_texture": "planets/kerbin/normal_texture.png",
-            "radius": 6.0000000,
+            "radius": 0.60000000,
             "mass": 5.2915158E+10,
             "sidereal_rotation_period": 21549.425,
             "inclination": 0.0,
@@ -81,16 +81,16 @@
         {
             "name": "Jool",
             "color_texture": "",
-            "normal_texture": "",
+            "normal_texture": "planets/jool/normal.png",
             "radius": 6.000000,
             "mass": 4.2332127E+18,
             "sidereal_rotation_period": 36000.0,
             "inclination": 1.304,
-            "periapsis": 65334882253.0,
+            "periapsis": 65334.8822530,
             "orbital_velocity_pe": 0.502430555555,
             "color": {
                 "red": 20,
-                "green": 153,
+                "green": 255,
                 "blue": 49
             }
         }

@@ -1,4 +1,5 @@
 use crate::planet_components::*;
+use crate::labels::*;
 use bevy::core_pipeline::bloom::BloomSettings;
 use bevy::input::keyboard::*;
 use bevy::input::mouse::*;
@@ -10,8 +11,8 @@ pub struct CameraPlugin;
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(spawn_camera)
-            .add_system(focus_camera)
-            .add_system(orbit_camera);
+            .add_system(focus_camera.label(SystemTypes::CameraLabel))
+            .add_system(orbit_camera.label(SystemTypes::CameraLabel));
     }
 }
 
@@ -33,6 +34,7 @@ impl Default for PanOrbitCamera {
         }
     }
 }
+
 
 fn focus_camera(
     mut key_evr: EventReader<KeyboardInput>,
@@ -129,11 +131,11 @@ fn orbit_camera(
             transform.rotation = transform.rotation * pitch; // rotate around local x axis
         } else if scroll.abs() > 0.0 {
             any = true;
-            pan_orbit.radius -= scroll * pan_orbit.radius * 0.2;
+            pan_orbit.radius -= scroll * pan_orbit.radius * 0.15;
 
             // minimum zoom is the radius of the currently focused body plus 1
             let min_zoom = planets.iter().find(|x| x.0.is_focused).unwrap().1.radius;
-            pan_orbit.radius = f32::max(pan_orbit.radius, min_zoom + 10.);
+            pan_orbit.radius = f32::max(pan_orbit.radius, min_zoom + 0.2);
         }
 
         if any {
@@ -176,7 +178,7 @@ fn spawn_camera(mut commands: Commands) {
             ..Default::default()
         },
         BloomSettings {
-            intensity: 0.99, // the default is 0.3
+            intensity: 0.8, // the default is 0.3
             ..default()
         },
     ));
